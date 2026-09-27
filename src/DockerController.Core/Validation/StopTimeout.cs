@@ -5,7 +5,6 @@ namespace DockerController.Core.Validation;
 
 public static class StopTimeout
 {
-    // Timeouten är tiden mellan SIGTERM och SIGKILL. 0 dödar containern omedelbart.
     public static Result<int> Resolve(int? requestedSeconds, int configuredDefaultSeconds)
     {
         var seconds = requestedSeconds ?? configuredDefaultSeconds;

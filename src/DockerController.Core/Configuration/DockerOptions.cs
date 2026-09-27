@@ -20,7 +20,6 @@ public sealed class DockerOptions
     [Required(AllowEmptyStrings = false)]
     public string ManagedLabelValue { get; set; } = "docker-controller";
 
-    // Controllerns egen container hör hit — annars kan API:et stoppa sig självt.
     public string[] DeniedNames { get; set; } = [];
 
     [Range(MinStopTimeoutSeconds, MaxStopTimeoutSeconds)]

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DockerController.Core\DockerController.Core.csproj" />
+    <ProjectReference Include="..\..\src\DockerController.Docker\DockerController.Docker.csproj" />
   </ItemGroup>
 
   <ItemGroup>

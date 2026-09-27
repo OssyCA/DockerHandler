@@ -12,11 +12,17 @@ public interface IDockerClientAdapter
         string idOrName,
         CancellationToken cancellationToken);
 
-    Task<bool> TryStartContainerAsync(string id, CancellationToken cancellationToken);
+    Task<ContainerOperationOutcome> StartContainerAsync(string id, CancellationToken cancellationToken);
 
-    Task<bool> TryStopContainerAsync(string id, int timeoutSeconds, CancellationToken cancellationToken);
+    Task<ContainerOperationOutcome> StopContainerAsync(
+        string id,
+        int timeoutSeconds,
+        CancellationToken cancellationToken);
 
-    Task RestartContainerAsync(string id, int timeoutSeconds, CancellationToken cancellationToken);
+    Task<ContainerOperationOutcome> RestartContainerAsync(
+        string id,
+        int timeoutSeconds,
+        CancellationToken cancellationToken);
 
     IAsyncEnumerable<ImageSummary> ListImagesAsync(CancellationToken cancellationToken);
 

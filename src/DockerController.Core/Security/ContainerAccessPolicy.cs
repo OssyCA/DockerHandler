@@ -18,8 +18,6 @@ public sealed class ContainerAccessPolicy : IContainerAccessPolicy
         _labelKey = options.ManagedLabelKey;
         _labelValue = options.ManagedLabelValue;
 
-        // Skiftlägesokänsligt är strängare än Dockers jämförelse: att neka för brett
-        // är rätt håll att fela på.
         _deniedNames = options.DeniedNames
             .Select(StripNamePrefix)
             .Where(name => name.Length > 0)
@@ -32,9 +30,6 @@ public sealed class ContainerAccessPolicy : IContainerAccessPolicy
     {
         ArgumentNullException.ThrowIfNull(subject);
 
-        // Denylistan vinner över labeln: annars kan controllern ge sig själv åtkomst
-        // genom att sätta labeln på sig själv. Namnen kommer från daemonen, inte från
-        // begäran, så det hjälper inte att ange id i stället för namn.
         foreach (var name in subject.Names)
         {
             if (_deniedNames.Contains(StripNamePrefix(name)))

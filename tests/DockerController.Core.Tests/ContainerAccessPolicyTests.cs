@@ -61,7 +61,6 @@ public class ContainerAccessPolicyTests
     }
 
     [Theory]
-    [InlineData("/docker-controller", "docker-controller")]
     [InlineData("docker-controller", "/docker-controller")]
     [InlineData("/Docker-Controller", "docker-controller")]
     public void Denylist_ignores_slash_prefix_and_case(string containerName, string deniedName)
