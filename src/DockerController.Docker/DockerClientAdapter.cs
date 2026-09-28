@@ -125,7 +125,9 @@ public sealed class DockerClientAdapter(
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            logger.LogError(ex, "Daemonen svarade inte på {DockerEndpoint}", client.Options.Endpoint);
+            var failure = DockerExceptionTranslator.Translate(ex, client.Options.Endpoint, cancellationToken);
+
+            logger.LogError(failure, "Hälsokontrollen misslyckades mot {DockerEndpoint}", client.Options.Endpoint);
 
             return new DaemonHealth(
                 HealthStatus.Unhealthy,
@@ -134,7 +136,7 @@ public sealed class DockerClientAdapter(
                 ServerVersion: null,
                 timeProvider.GetElapsedTime(startedAt),
                 timeProvider.GetUtcNow(),
-                "Docker-daemonen svarar inte.");
+                DockerExceptionTranslator.Describe(failure));
         }
     }
 

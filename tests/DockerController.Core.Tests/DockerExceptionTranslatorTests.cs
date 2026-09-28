@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using System.Text.Json;
 using DockerController.Core.Exceptions;
 using DockerController.Docker;
 
@@ -71,5 +72,35 @@ public class DockerExceptionTranslatorTests
         var original = new InvalidOperationException("bugg i vår egen kod");
 
         Assert.Same(original, Translate(original));
+    }
+
+    [Fact]
+    public void Access_denied_is_described_differently_from_an_unreachable_daemon()
+    {
+        var denied = DockerExceptionTranslator.Describe(Translate(new UnauthorizedAccessException()));
+        var unreachable = DockerExceptionTranslator.Describe(
+            Translate(new SocketException((int)SocketError.ConnectionRefused)));
+
+        Assert.NotEqual(denied, unreachable);
+    }
+
+    [Fact]
+    public void Access_denied_is_described_as_a_permission_problem()
+    {
+        var description = DockerExceptionTranslator.Describe(Translate(new UnauthorizedAccessException()));
+
+        Assert.Contains("behörighet", description, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Protocol_errors_are_described_separately_from_both()
+    {
+        var protocol = DockerExceptionTranslator.Describe(Translate(new JsonException()));
+        var denied = DockerExceptionTranslator.Describe(Translate(new UnauthorizedAccessException()));
+        var unreachable = DockerExceptionTranslator.Describe(
+            Translate(new SocketException((int)SocketError.ConnectionRefused)));
+
+        Assert.NotEqual(protocol, denied);
+        Assert.NotEqual(protocol, unreachable);
     }
 }
