@@ -3,6 +3,7 @@ using DockerController.Api.Configuration;
 using DockerController.Api.Endpoints;
 using DockerController.Api.Http;
 using DockerController.Core.Configuration;
+using DockerController.Core.Security;
 using DockerController.Docker.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
@@ -26,6 +27,14 @@ try
         .Bind(builder.Configuration.GetSection(DockerOptions.SectionName))
         .ValidateOnStart();
     builder.Services.AddSingleton<IValidateOptions<DockerOptions>, DockerOptionsValidator>();
+
+    builder.Services
+        .AddOptions<AuthOptions>()
+        .Bind(builder.Configuration.GetSection(AuthOptions.SectionName))
+        .ValidateOnStart();
+    builder.Services.AddSingleton<IValidateOptions<AuthOptions>, AuthOptionsValidator>();
+    builder.Services.AddSingleton(provider =>
+        new ApiKeyRegistry(provider.GetRequiredService<IOptions<AuthOptions>>().Value));
 
     builder.Services.AddDockerController();
 
