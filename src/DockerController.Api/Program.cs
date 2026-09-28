@@ -2,7 +2,10 @@ using System.Text.Json.Serialization;
 using DockerController.Api.Configuration;
 using DockerController.Api.Endpoints;
 using DockerController.Api.Http;
+using DockerController.Api.Security;
 using DockerController.Core.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using DockerController.Core.Security;
 using DockerController.Docker.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -36,6 +39,15 @@ try
     builder.Services.AddSingleton(provider =>
         new ApiKeyRegistry(provider.GetRequiredService<IOptions<AuthOptions>>().Value));
 
+    builder.Services
+        .AddAuthentication(ApiKeyAuthenticationHandler.SchemeName)
+        .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
+            ApiKeyAuthenticationHandler.SchemeName,
+            configureOptions: null);
+
+    builder.Services.AddAuthorizationBuilder()
+        .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
     builder.Services.AddDockerController();
 
     builder.Services.ConfigureHttpJsonOptions(jsonOptions =>
@@ -50,9 +62,12 @@ try
     app.UseExceptionHandler();
     app.UseSerilogRequestLogging();
 
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapOpenApi().AllowAnonymous();
+    app.MapScalarApiReference().AllowAnonymous();
+    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription().AllowAnonymous();
 
     app.MapContainerEndpoints();
     app.MapImageEndpoints();
