@@ -17,7 +17,13 @@ public static class HealthEndpoints
             })
             .WithTags("Health")
             .WithSummary("Controllerns hälsa")
-            .WithDescription("Svarar 503 när Docker-daemonen inte går att nå.");
+            .WithDescription("Svarar 503 när Docker-daemonen inte går att nå. Kräver API-nyckel.");
+
+        builder.MapGet("/alive", () => Results.NoContent())
+            .AllowAnonymous()
+            .WithTags("Health")
+            .WithSummary("Liveness")
+            .WithDescription("Svarar 204 utan kropp, utan nyckel. Avslöjar ingenting om värden.");
 
         return builder;
     }

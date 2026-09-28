@@ -60,14 +60,24 @@ try
     var app = builder.Build();
 
     app.UseExceptionHandler();
-    app.UseSerilogRequestLogging();
+    app.UseSerilogRequestLogging(loggingOptions =>
+        loggingOptions.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            if (httpContext.User.Identity is { IsAuthenticated: true, Name: { } keyId })
+            {
+                diagnosticContext.Set("ApiKeyId", keyId);
+            }
+        });
 
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapOpenApi().AllowAnonymous();
-    app.MapScalarApiReference().AllowAnonymous();
-    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription().AllowAnonymous();
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi().AllowAnonymous();
+        app.MapScalarApiReference().AllowAnonymous();
+        app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription().AllowAnonymous();
+    }
 
     app.MapContainerEndpoints();
     app.MapImageEndpoints();
