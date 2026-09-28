@@ -14,6 +14,7 @@ try
     builder.Services.AddApiLogging(builder.Configuration);
     builder.Services.AddApiOptions(builder.Configuration);
     builder.Services.AddApiKeyAuthentication();
+    builder.Services.AddApiRateLimiting();
     builder.Services.AddApiConventions();
     builder.Services.AddDockerController();
     builder.Services.AddOpenApi();
@@ -24,6 +25,7 @@ try
     app.UseApiRequestLogging();
 
     app.UseAuthentication();
+    app.UseRateLimiter();
     app.UseAuthorization();
 
     app.MapDeveloperDocumentation();

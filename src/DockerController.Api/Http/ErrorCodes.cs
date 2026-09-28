@@ -5,6 +5,7 @@ public static class ErrorCodes
     public const string PropertyName = "code";
 
     public const string Unauthorized = "unauthorized";
+    public const string RateLimited = "rate_limited";
     public const string NotFound = "not_found";
     public const string Conflict = "conflict";
     public const string ValidationFailed = "validation_failed";
