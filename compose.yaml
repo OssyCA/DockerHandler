@@ -4,13 +4,26 @@ services:
     container_name: docker-controller
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "127.0.0.1:8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - api_logs:/app/logs
     group_add:
       - "${DOCKER_GID}"
 
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
 volumes:
   api_logs:
+  caddy_data:
+  caddy_config:

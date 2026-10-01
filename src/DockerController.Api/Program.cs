@@ -18,9 +18,11 @@ try
     builder.Services.AddApiConventions();
     builder.Services.AddDockerController();
     builder.Services.AddOpenApi();
+    builder.Services.AddApiForwardedHeaders();
 
     var app = builder.Build();
 
+    app.UseForwardedHeaders();
     app.UseExceptionHandler();
     app.UseApiRequestLogging();
 

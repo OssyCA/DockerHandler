@@ -10,7 +10,7 @@ function Invoke-Burst {
     Write-Host "$Label" -NoNewline
 
     for ($i = 1; $i -le $Count; $i++) {
-        $code = & curl.exe -s -o NUL -w "%{http_code}" @Header "$BaseUrl/containers"
+          $code = & curl.exe -s -k -o NUL -w "%{http_code}" @Header "$BaseUrl/containers"
         Write-Host " $code" -NoNewline
     }
 
@@ -22,8 +22,8 @@ Write-Host "  Forvantat: 10 st 401, sedan 429 resten av minuten."
 Write-Host ""
 
 Write-Host "Avvisat svar:"
-& curl.exe -s -D - -o NUL "$BaseUrl/containers" | Select-String -Pattern "HTTP/|retry-after"
-& curl.exe -s "$BaseUrl/containers"
+& curl.exe -s -k -D - -o NUL "$BaseUrl/containers" | Select-String -Pattern "HTTP/|retry-after"
+& curl.exe -s -k "$BaseUrl/containers"
 Write-Host ""
 Write-Host ""
 

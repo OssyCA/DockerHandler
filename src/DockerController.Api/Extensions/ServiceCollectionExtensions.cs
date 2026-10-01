@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using DockerController.Api.Configuration;
 using DockerController.Api.Http;
 using DockerController.Api.Security;
@@ -6,8 +5,10 @@ using DockerController.Core.Configuration;
 using DockerController.Core.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 using Serilog;
+using System.Text.Json.Serialization;
 
 namespace DockerController.Api.Extensions;
 
@@ -60,6 +61,19 @@ public static class ServiceCollectionExtensions
 
         services.AddProblemDetails();
         services.AddExceptionHandler<GlobalExceptionHandler>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddApiForwardedHeaders(this IServiceCollection services)
+    {
+        services.Configure<ForwardedHeadersOptions>(forwardedOptions =>
+        {
+            forwardedOptions.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            forwardedOptions.KnownIPNetworks.Clear();
+            forwardedOptions.KnownProxies.Clear();
+        });
 
         return services;
     }
