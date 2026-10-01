@@ -1,0 +1,16 @@
+services:
+  api:
+    build: .
+    container_name: docker-controller
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - api_logs:/app/logs
+    group_add:
+      - "${DOCKER_GID}"
+
+volumes:
+  api_logs:
