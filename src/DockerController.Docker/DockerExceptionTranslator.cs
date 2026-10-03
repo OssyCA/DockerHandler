@@ -48,6 +48,13 @@ public static class DockerExceptionTranslator
         };
     }
 
+    public static string Describe(Exception exception) => exception switch
+    {
+        DockerSocketAccessDeniedException => "Controllern saknar behörighet till Docker-socketen.",
+        DockerProtocolException => "Oväntat svar från Docker-daemonen.",
+        _ => "Docker-daemonen är inte tillgänglig.",
+    };
+
     private static bool IsAccessDenied(Exception exception)
     {
         for (var current = exception; current is not null; current = current.InnerException)

@@ -5,3 +5,5 @@ obj/
 .env
 /plans
 logs/
+logs/
+/plans
