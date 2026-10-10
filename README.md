@@ -43,7 +43,7 @@ Errors are returned as problem details (`application/problem+json`).
 - **Rate limiting.** 60 requests per minute per API key, 10 per minute per IP address for requests without a valid key.
 - **Logging.** Logs record the `Id` of the key that made a request, never its value.
 - **Non-root.** The API process runs as an unprivileged user inside its container.
-- **JTW AUTH.** JWT will be included later on 
+- **JWT AUTH.** JWT will be included later on 
 
 ### Known limitation
 
