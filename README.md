@@ -1,4 +1,4 @@
-# DockerHandler (Hobby projekt)
+# DockerHandler
 
 A small HTTP API for listing, starting, stopping and restarting Docker containers on a single server, with a companion mobile app. The API only acts on containers that carry a specific label, so everything else on the host stays out of reach.
 
@@ -18,7 +18,7 @@ Caddy is the only service with published ports (80 and 443) and obtains its TLS 
 | `src/DockerController.Core` | Models, access policy, result types, abstractions |
 | `src/DockerController.Docker` | Docker client implementation |
 | `tests/DockerController.Core.Tests` | Unit tests |
-| `mobile/` | Expo app | UNDER DEVELOPMENT
+| `mobile/` | Expo app | UNDER DEVELOPMENT Under branch Stage 3
 
 ## Endpoints
 
@@ -118,8 +118,10 @@ dotnet test
 
 ```bash
 cd mobile
+cp .env.example .env.local
+# set EXPO_PUBLIC_API_URL to your server's address
 npm install
 npm start
 ```
 
-The server address and API key are entered in the app and kept in the device's secure storage.
+The API key is entered in the app and kept in the device's secure storage.
