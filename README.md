@@ -18,7 +18,7 @@ Caddy is the only service with published ports (80 and 443) and obtains its TLS 
 | `src/DockerController.Core` | Models, access policy, result types, abstractions |
 | `src/DockerController.Docker` | Docker client implementation |
 | `tests/DockerController.Core.Tests` | Unit tests |
-| `mobile/` | Expo app | UNDER DEVELOPMENT Under branch Stage 3
+| `mobile/` | Expo app  UNDER DEVELOPMENT Under branch Stage 3 |
 
 ## Endpoints
 
