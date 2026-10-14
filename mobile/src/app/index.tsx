@@ -2,9 +2,20 @@ import { Text, View } from "react-native";
 import { Link, Redirect } from "expo-router";
 import { useSettings } from "../settings/store";
 import { useState, useEffect } from "react";
-import type { ContainerSummary } from "../api/types";
+import type { ContainerSummary, ContainerState } from "../api/types";
 import { listContainers } from "../api/client";
 import { FlatList } from "react-native";
+
+const stateColors: Record<ContainerState, string> = {
+  Running: "turquoise",
+  Restarting: "orange",
+  Exited: "red",
+  Paused: "yellow",
+  Created: "gray",
+  Removing: "lightgray",
+  Dead: "darkgray",
+  Unknown: "black",
+};
 
 export default function Index() {
   const { apiKey, baseUrl } = useSettings();
@@ -52,7 +63,24 @@ export default function Index() {
       <FlatList
         data={containers}
         keyExtractor={(container) => container.id}
-        renderItem={({ item }) => <Text>{item.name}</Text>}
+        renderItem={({ item }) => (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View
+              style={{
+                backgroundColor: stateColors[item.state],
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                margin: 5,
+              }}
+            />
+            <View>
+              <Text>{item.name}</Text>
+              <Text>{item.state}</Text>
+              <Text>{item.image}</Text>
+            </View>
+          </View>
+        )}
       />
     </View>
   );
