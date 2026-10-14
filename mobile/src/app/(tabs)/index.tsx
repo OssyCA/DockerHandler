@@ -64,9 +64,6 @@ export default function Index() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Text>Docker manager</Text>
-      <Link href="/settings">Settings</Link>
-
       <FlatList
         refreshing={refreshing}
         onRefresh={onRefresh}

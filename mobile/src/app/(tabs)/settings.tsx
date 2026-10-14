@@ -12,11 +12,7 @@ export default function Settings() {
 
   async function onSave() {
     await save({ apiKey: newApiKey, baseUrl: newBaseUrl });
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace("/");
-    }
+    router.navigate("/");
   }
 
   return (
