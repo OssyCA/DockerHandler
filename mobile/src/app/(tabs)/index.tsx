@@ -1,9 +1,9 @@
 import { Text, View } from "react-native";
 import { Link, Redirect } from "expo-router";
-import { useSettings } from "../settings/store";
+import { useSettings } from "../../settings/store";
 import { useState, useEffect, useCallback } from "react";
-import type { ContainerSummary, ContainerState } from "../api/types";
-import { listContainers } from "../api/client";
+import type { ContainerSummary, ContainerState } from "../../api/types";
+import { listContainers } from "../../api/client";
 import { FlatList } from "react-native";
 
 const stateColors: Record<ContainerState, string> = {

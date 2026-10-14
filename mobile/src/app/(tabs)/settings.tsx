@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Button, Text, TextInput, View } from "react-native";
 
-import { useSettings } from "../settings/store";
+import { useSettings } from "../../settings/store";
 
 export default function Settings() {
   const { apiKey, baseUrl, save } = useSettings();

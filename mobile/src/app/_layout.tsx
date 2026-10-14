@@ -5,7 +5,7 @@ export default function RootLayout() {
   return (
     <SettingsProvider>
       <Stack>
-        <Stack.Screen name="index" options={{ title: "DockerHandler" }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </SettingsProvider>
   );
