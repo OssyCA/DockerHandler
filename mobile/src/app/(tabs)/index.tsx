@@ -1,21 +1,11 @@
-import { Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Link, Redirect } from "expo-router";
 import { useSettings } from "../../settings/store";
 import { useState, useEffect, useCallback } from "react";
-import type { ContainerSummary, ContainerState } from "../../api/types";
+import type { ContainerSummary } from "../../api/types";
 import { listContainers } from "../../api/client";
-import { FlatList } from "react-native";
-
-const stateColors: Record<ContainerState, string> = {
-  Running: "turquoise",
-  Restarting: "orange",
-  Exited: "red",
-  Paused: "yellow",
-  Created: "gray",
-  Removing: "lightgray",
-  Dead: "darkgray",
-  Unknown: "black",
-};
+import { ContainerRow } from "../../ui/ContainerRow";
+import { colors } from "../../ui/theme";
 
 export default function Index() {
   const { apiKey, baseUrl } = useSettings();
@@ -51,49 +41,58 @@ export default function Index() {
 
   if (error) {
     return (
-      <View>
-        <Text>Error: {error}</Text>
-        <Link href="/settings">Settings</Link>
+      <View style={styles.message}>
+        <Text style={styles.text}>Error: {error}</Text>
+        <Link href="/settings" style={styles.link}>
+          Settings
+        </Link>
       </View>
     );
   }
 
   if (containers === null) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={styles.message}>
+        <Text style={styles.muted}>Loading...</Text>
+      </View>
+    );
   }
 
+  const running = containers.filter((c) => c.state === "Running").length;
+
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        data={containers}
-        ListEmptyComponent={
-          <Text>
-            Inga hanterade containers. Lägg till etiketten
-            managed-by=docker-controller.
-          </Text>
-        }
-        keyExtractor={(container) => container.id}
-        renderItem={({ item }) => (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View
-              style={{
-                backgroundColor: stateColors[item.state],
-                width: 10,
-                height: 10,
-                borderRadius: 5,
-                margin: 5,
-              }}
-            />
-            <View>
-              <Text>{item.name}</Text>
-              <Text>{item.statusText}</Text>
-              <Text>{item.image}</Text>
-            </View>
-          </View>
-        )}
-      />
-    </View>
+    <FlatList
+      contentContainerStyle={styles.list}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      data={containers}
+      ListHeaderComponent={
+        <Text style={styles.muted}>
+          {running} running · {containers.length - running} stopped
+        </Text>
+      }
+      ListEmptyComponent={
+        <Text style={styles.muted}>
+          Inga hanterade containers. Lägg till etiketten
+          managed-by=docker-controller.
+        </Text>
+      }
+      keyExtractor={(container) => container.id}
+      renderItem={({ item }) => <ContainerRow container={item} />}
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    padding: 16,
+    gap: 10,
+  },
+  message: {
+    padding: 16,
+    gap: 12,
+  },
+  text: { color: colors.text },
+  muted: { color: colors.textMuted },
+  link: { color: colors.accent },
+});
