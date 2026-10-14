@@ -2,6 +2,7 @@ services:
   api:
     build: .
     container_name: docker-controller
+    read_only: true
     restart: unless-stopped
     env_file: .env
     volumes:
