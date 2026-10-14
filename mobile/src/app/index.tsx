@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { useSettings } from "../settings/store";
 import { useState, useEffect } from "react";
 import type { ContainerSummary } from "../api/types";
@@ -12,10 +12,11 @@ export default function Index() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!apiKey || !baseUrl) return;
     async function fetchContainers() {
       try {
+        setError(null);
         setContainers(await listContainers({ apiKey, baseUrl }));
-        error && setError(null); // Clear error if fetch is successful
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred",
@@ -25,6 +26,10 @@ export default function Index() {
 
     fetchContainers();
   }, [apiKey, baseUrl]);
+
+  if (!apiKey || !baseUrl) {
+    return <Redirect href="/settings" />;
+  }
 
   if (error) {
     return (
