@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Link, Redirect } from "expo-router";
 import { useSettings } from "../settings/store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { ContainerSummary, ContainerState } from "../api/types";
 import { listContainers } from "../api/client";
 import { FlatList } from "react-native";
@@ -21,22 +21,29 @@ export default function Index() {
   const { apiKey, baseUrl } = useSettings();
   const [containers, setContainers] = useState<ContainerSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = useCallback(async () => {
+    try {
+      setError(null);
+      setContainers(await listContainers({ apiKey, baseUrl }));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred",
+      );
+    }
+  }, [apiKey, baseUrl]);
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await load();
+    setRefreshing(false);
+  }
 
   useEffect(() => {
     if (!apiKey || !baseUrl) return;
-    async function fetchContainers() {
-      try {
-        setError(null);
-        setContainers(await listContainers({ apiKey, baseUrl }));
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred",
-        );
-      }
-    }
-
-    fetchContainers();
-  }, [apiKey, baseUrl]);
+    load();
+  }, [load]);
 
   if (!apiKey || !baseUrl) {
     return <Redirect href="/settings" />;
@@ -56,11 +63,13 @@ export default function Index() {
   }
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Text>Docker manager</Text>
       <Link href="/settings">Settings</Link>
 
       <FlatList
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         data={containers}
         keyExtractor={(container) => container.id}
         renderItem={({ item }) => (
@@ -76,7 +85,7 @@ export default function Index() {
             />
             <View>
               <Text>{item.name}</Text>
-              <Text>{item.state}</Text>
+              <Text>{item.statusText}</Text>
               <Text>{item.image}</Text>
             </View>
           </View>
