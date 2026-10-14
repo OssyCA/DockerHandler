@@ -71,6 +71,12 @@ export default function Index() {
         refreshing={refreshing}
         onRefresh={onRefresh}
         data={containers}
+        ListEmptyComponent={
+          <Text>
+            Inga hanterade containers. Lägg till etiketten
+            managed-by=docker-controller.
+          </Text>
+        }
         keyExtractor={(container) => container.id}
         renderItem={({ item }) => (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
