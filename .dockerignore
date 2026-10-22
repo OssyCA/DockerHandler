@@ -5,3 +5,4 @@
 .env
 *.user
 tests/
+mobile/
