@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { Link, Redirect } from "expo-router";
+import { Link, Redirect, useRouter } from "expo-router";
 import { useSettings } from "../../settings/store";
 import { useState, useEffect, useCallback } from "react";
 import type { ContainerSummary } from "../../api/types";
@@ -12,6 +12,7 @@ export default function Index() {
   const [containers, setContainers] = useState<ContainerSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
 
   const load = useCallback(async () => {
     try {
@@ -78,7 +79,12 @@ export default function Index() {
         </Text>
       }
       keyExtractor={(container) => container.id}
-      renderItem={({ item }) => <ContainerRow container={item} />}
+      renderItem={({ item }) => (
+        <ContainerRow
+          container={item}
+          onPress={() => router.push(`/container/${item.id}`)}
+        />
+      )}
     />
   );
 }

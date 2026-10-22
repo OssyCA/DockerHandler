@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import type { ContainerState, ContainerSummary } from "../api/types";
 import { colors } from "./theme";
 
@@ -13,12 +13,18 @@ const stateColors: Record<ContainerState, string> = {
   Unknown: colors.textMuted,
 };
 
-export function ContainerRow({ container }: { container: ContainerSummary }) {
+export function ContainerRow({
+  container,
+  onPress,
+}: {
+  container: ContainerSummary;
+  onPress: () => void;
+}) {
   const color = stateColors[container.state];
   const running = container.state === "Running";
 
   return (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={onPress}>
       <View
         style={[
           styles.dot,
@@ -33,7 +39,7 @@ export function ContainerRow({ container }: { container: ContainerSummary }) {
           {container.image} · {container.statusText}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
