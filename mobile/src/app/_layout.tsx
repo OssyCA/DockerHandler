@@ -11,7 +11,7 @@ export default function RootLayout() {
           name="container/[id]"
           options={{
             presentation: "formSheet",
-            sheetAllowedDetents: "fitToContents",
+            sheetAllowedDetents: [0.6, 1],
             sheetCornerRadius: 24,
             headerShown: false,
             contentStyle: { backgroundColor: colors.card },
