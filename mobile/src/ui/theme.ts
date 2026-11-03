@@ -5,4 +5,6 @@ export const colors = {
   text: "#E8EAED",
   textMuted: "#9AA0A6",
   accent: "#F2A33C",
+  danger: "#E74C3C",
+  dangerSurface: "#2C1A1A",
 };

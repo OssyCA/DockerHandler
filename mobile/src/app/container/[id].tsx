@@ -1,12 +1,19 @@
 import { useLocalSearchParams } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { colors } from "../../ui/theme";
 import { useCallback, useEffect, useState } from "react";
 import { useSettings } from "../../settings/store";
 import { ApiError, getContainer, runAction } from "../../api/client";
+import { ActionButton } from "../../ui/ActionButton";
 
 import type { ContainerDetails } from "../../api/types";
 import type { ContainerAction } from "../../api/client";
+
+const labels: Record<ContainerAction, { idle: string; busy: string }> = {
+  start: { idle: "Start", busy: "Starting…" },
+  stop: { idle: "Stop", busy: "Stopping…" },
+  restart: { idle: "Restart", busy: "Restarting…" },
+};
 
 export default function Container() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -70,6 +77,9 @@ export default function Container() {
   const canStop = idle && running;
   const canRestart = idle && running;
 
+  const title = (action: ContainerAction) =>
+    busy === action ? labels[action].busy : labels[action].idle;
+
   return (
     <View style={styles.sheet}>
       <Text style={styles.name}>{container.name}</Text>
@@ -78,33 +88,22 @@ export default function Container() {
       </Text>
       <Text style={styles.muted}>{container.statusText}</Text>
       <View style={styles.actions}>
-        <Pressable
-          onPress={act("start")}
-          disabled={!canStart}
-          style={[styles.button, !canStart && styles.disabled]}
-        >
-          <Text style={styles.text}>
-            {busy === "start" ? "Starting…" : "Start"}
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={act("stop")}
-          disabled={!canStop}
-          style={[styles.button, !canStop && styles.disabled]}
-        >
-          <Text style={styles.text}>
-            {busy === "stop" ? "Stopping…" : "Stop"}
-          </Text>
-        </Pressable>
-        <Pressable
+        <ActionButton
+          title={title("restart")}
           onPress={act("restart")}
           disabled={!canRestart}
-          style={[styles.button, !canRestart && styles.disabled]}
-        >
-          <Text style={styles.text}>
-            {busy === "restart" ? "Restarting…" : "Restart"}
-          </Text>
-        </Pressable>
+        />
+        <ActionButton
+          title={title("stop")}
+          onPress={act("stop")}
+          disabled={!canStop}
+          danger
+        />
+        <ActionButton
+          title={title("start")}
+          onPress={act("start")}
+          disabled={!canStart}
+        />
       </View>
     </View>
   );
@@ -126,20 +125,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   actions: {
-    flexDirection: "row",
-    gap: 8,
+    gap: 10,
     marginTop: 16,
   },
-  button: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-  },
-  disabled: { opacity: 0.4 },
   text: { color: colors.text },
   muted: { color: colors.textMuted },
 });
