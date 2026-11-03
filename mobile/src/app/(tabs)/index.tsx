@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { Link, Redirect, useRouter } from "expo-router";
+import { Link, Redirect, useFocusEffect, useRouter } from "expo-router";
 import { useSettings } from "../../settings/store";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { ContainerSummary } from "../../api/types";
 import { listContainers } from "../../api/client";
 import { ContainerRow } from "../../ui/ContainerRow";
@@ -31,10 +31,12 @@ export default function Index() {
     setRefreshing(false);
   }
 
-  useEffect(() => {
-    if (!apiKey || !baseUrl) return;
-    load();
-  }, [load]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!apiKey || !baseUrl) return;
+      load();
+    }, [load, apiKey, baseUrl]),
+  );
 
   if (!apiKey || !baseUrl) {
     return <Redirect href="/settings" />;
