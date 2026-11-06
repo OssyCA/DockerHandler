@@ -1,27 +1,27 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
-import { Link, Redirect, useFocusEffect, useRouter } from "expo-router";
+import { FlatList, StyleSheet } from "react-native";
+import { Redirect, useFocusEffect, useRouter } from "expo-router";
 import { useSettings } from "../../settings/store";
 import { useState, useCallback } from "react";
 import type { ContainerSummary } from "../../api/types";
 import { listContainers } from "../../api/client";
+import { describe, type Problem } from "../../api/messages";
 import { ContainerRow } from "../../ui/ContainerRow";
-import { colors } from "../../ui/theme";
+import { ErrorView, LoadingView } from "../../ui/StatusView";
+import { ThemedText } from "../../ui/ThemedText";
 
 export default function Index() {
   const { apiKey, baseUrl } = useSettings();
   const [containers, setContainers] = useState<ContainerSummary[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [problem, setProblem] = useState<Problem | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
   const load = useCallback(async () => {
     try {
-      setError(null);
+      setProblem(null);
       setContainers(await listContainers({ apiKey, baseUrl }));
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred",
-      );
+      setProblem(describe(err));
     }
   }, [apiKey, baseUrl]);
 
@@ -42,23 +42,12 @@ export default function Index() {
     return <Redirect href="/settings" />;
   }
 
-  if (error) {
-    return (
-      <View style={styles.message}>
-        <Text style={styles.text}>Error: {error}</Text>
-        <Link href="/settings" style={styles.link}>
-          Settings
-        </Link>
-      </View>
-    );
+  if (problem) {
+    return <ErrorView problem={problem} onRetry={load} />;
   }
 
   if (containers === null) {
-    return (
-      <View style={styles.message}>
-        <Text style={styles.muted}>Loading...</Text>
-      </View>
-    );
+    return <LoadingView />;
   }
 
   const running = containers.filter((c) => c.state === "Running").length;
@@ -70,15 +59,15 @@ export default function Index() {
       onRefresh={onRefresh}
       data={containers}
       ListHeaderComponent={
-        <Text style={styles.muted}>
+        <ThemedText muted>
           {running} running · {containers.length - running} stopped
-        </Text>
+        </ThemedText>
       }
       ListEmptyComponent={
-        <Text style={styles.muted}>
+        <ThemedText muted>
           Inga hanterade containers. Lägg till etiketten
           managed-by=docker-controller.
-        </Text>
+        </ThemedText>
       }
       keyExtractor={(container) => container.id}
       renderItem={({ item }) => (
@@ -96,11 +85,4 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 10,
   },
-  message: {
-    padding: 16,
-    gap: 12,
-  },
-  text: { color: colors.text },
-  muted: { color: colors.textMuted },
-  link: { color: colors.accent },
 });

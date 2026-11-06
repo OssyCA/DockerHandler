@@ -1,10 +1,12 @@
 import { useLocalSearchParams } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
-import { colors } from "../../ui/theme";
+import { StyleSheet, View } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { useSettings } from "../../settings/store";
 import { ApiError, getContainer, runAction } from "../../api/client";
+import { describe, type Problem } from "../../api/messages";
 import { ActionButton } from "../../ui/ActionButton";
+import { ErrorView, LoadingView } from "../../ui/StatusView";
+import { ThemedText } from "../../ui/ThemedText";
 
 import type { ContainerDetails } from "../../api/types";
 import type { ContainerAction } from "../../api/client";
@@ -19,17 +21,15 @@ export default function Container() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { apiKey, baseUrl } = useSettings();
   const [container, setContainer] = useState<ContainerDetails | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [problem, setProblem] = useState<Problem | null>(null);
   const [busy, setBusy] = useState<ContainerAction | null>(null);
 
   const load = useCallback(async () => {
     try {
-      setError(null);
+      setProblem(null);
       setContainer(await getContainer({ apiKey, baseUrl }, id));
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unknown error occurred",
-      );
+      setProblem(describe(err));
     }
   }, [apiKey, baseUrl, id]);
 
@@ -42,9 +42,7 @@ export default function Container() {
       if (err instanceof ApiError && err.code === "conflict") {
         await load();
       } else {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred",
-        );
+        setProblem(describe(err));
       }
     } finally {
       setBusy(null);
@@ -55,20 +53,12 @@ export default function Container() {
     load();
   }, [load]);
 
-  if (error) {
-    return (
-      <View style={styles.sheet}>
-        <Text style={styles.text}>Error: {error}</Text>
-      </View>
-    );
+  if (problem) {
+    return <ErrorView problem={problem} onRetry={load} />;
   }
 
   if (!container) {
-    return (
-      <View style={styles.sheet}>
-        <Text style={styles.muted}>Loading...</Text>
-      </View>
-    );
+    return <LoadingView />;
   }
 
   const idle = busy === null;
@@ -82,11 +72,11 @@ export default function Container() {
 
   return (
     <View style={styles.sheet}>
-      <Text style={styles.name}>{container.name}</Text>
-      <Text style={styles.mono} numberOfLines={1}>
+      <ThemedText style={styles.name}>{container.name}</ThemedText>
+      <ThemedText muted style={styles.mono} numberOfLines={1}>
         {container.image}
-      </Text>
-      <Text style={styles.muted}>{container.statusText}</Text>
+      </ThemedText>
+      <ThemedText muted>{container.statusText}</ThemedText>
       <View style={styles.actions}>
         <ActionButton
           title={title("restart")}
@@ -115,12 +105,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   name: {
-    color: colors.text,
     fontSize: 24,
     fontWeight: "600",
   },
   mono: {
-    color: colors.textMuted,
     fontFamily: "monospace",
     fontSize: 13,
   },
@@ -128,6 +116,4 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 16,
   },
-  text: { color: colors.text },
-  muted: { color: colors.textMuted },
 });
