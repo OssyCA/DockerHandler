@@ -9,6 +9,7 @@ export default function Settings() {
   const { apiKey, baseUrl, save } = useSettings();
   const [newApiKey, setNewApiKey] = useState(apiKey);
   const [newBaseUrl, setNewBaseUrl] = useState(baseUrl);
+  const [keyVisible, setKeyVisible] = useState(false);
   const router = useRouter();
 
   async function onSave() {
@@ -32,7 +33,12 @@ export default function Settings() {
       </View>
 
       <View style={styles.field}>
-        <Text style={styles.label}>API-NYCKEL</Text>
+        <View style={styles.labelRow}>
+          <Text style={styles.label}>API-NYCKEL</Text>
+          <Pressable onPress={() => setKeyVisible(!keyVisible)} hitSlop={12}>
+            <Text style={styles.toggle}>{keyVisible ? "DÖLJ" : "VISA"}</Text>
+          </Pressable>
+        </View>
         <TextInput
           style={styles.input}
           placeholderTextColor={colors.textMuted}
@@ -41,7 +47,7 @@ export default function Settings() {
           placeholder="64 tecken från serverns Auth__Keys"
           autoCapitalize="none"
           autoCorrect={false}
-          secureTextEntry
+          secureTextEntry={!keyVisible}
         />
       </View>
 
@@ -65,6 +71,16 @@ const styles = StyleSheet.create({
   },
   label: {
     color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 1.5,
+  },
+  labelRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  toggle: {
+    color: colors.accent,
     fontSize: 12,
     fontWeight: "600",
     letterSpacing: 1.5,
