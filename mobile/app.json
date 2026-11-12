@@ -8,6 +8,7 @@
     "userInterfaceStyle": "dark",
     "scheme": "dockcontain",
     "android": {
+      "package": "eu.dockcontain.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -16,9 +17,6 @@
       },
       "predictiveBackGestureEnabled": false
     },
-    "plugins": [
-      "expo-router",
-      "expo-secure-store"
-    ]
+    "plugins": ["expo-router", "expo-secure-store"]
   }
 }
