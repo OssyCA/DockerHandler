@@ -1,0 +1,43 @@
+name: api
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "Directory.Build.props"
+      - "DockerController.slnx"
+      - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/api.yml"
+  push:
+    branches:
+      - "master"
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "Directory.Build.props"
+      - "DockerController.slnx"
+      - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/api.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore
+        run: dotnet restore DockerController.slnx
+      - name: Build
+        run: dotnet build DockerController.slnx --no-restore -c Release
+      - name: Test
+        run: dotnet test DockerController.slnx --no-build -c Release
+      - name: Docker
+        run: docker build -t docker-controller:ci .
