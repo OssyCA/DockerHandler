@@ -18,6 +18,9 @@
     "@types/react": "~19.3.0",
     "typescript": "~6.0.3"
   },
+  "overrides": {
+    "react-dom": "19.3.0"
+  },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android"
