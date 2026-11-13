@@ -8,4 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: ls -la
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore
+        run: dotnet restore DockerController.slnx
+      - name: Build
+        run: dotnet build DockerController.slnx --no-restore -c Release
+      - name: Test
+        run: dotnet test DockerController.slnx --no-build -c Release
