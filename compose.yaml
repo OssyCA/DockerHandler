@@ -5,10 +5,10 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - api_logs:/app/logs
-    group_add:
-      - "${DOCKER_GID}"
+    networks:
+      - default
+      - docker-api
 
   caddy:
     image: caddy:2-alpine
@@ -22,6 +22,29 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+
+  socket-proxy:
+    container_name: socket-proxy
+    image: lscr.io/linuxserver/socket-proxy:3.4.7-r0-ls105
+    environment:
+      CONTAINERS: 1
+      IMAGES: 1
+      ALLOW_START: 1
+      ALLOW_RESTARTS: 1
+      EVENTS: 0
+      PING: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run
+    networks:
+      - docker-api
+
+networks:
+  docker-api:
+    internal: true
 
 volumes:
   api_logs:
