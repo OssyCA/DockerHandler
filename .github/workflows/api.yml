@@ -17,3 +17,5 @@ jobs:
         run: dotnet build DockerController.slnx --no-restore -c Release
       - name: Test
         run: dotnet test DockerController.slnx --no-build -c Release
+      - name: Docker
+        run: docker build -t docker-controller:ci .
