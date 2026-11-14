@@ -1,0 +1,32 @@
+name: app
+
+on:
+  pull_request:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/app.yml"
+  push:
+    branches:
+      - "master"
+    paths:
+      - "mobile/**"
+      - ".github/workflows/app.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+      - name: Install
+        run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
