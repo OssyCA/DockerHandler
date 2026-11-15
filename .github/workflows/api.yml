@@ -46,6 +46,9 @@ jobs:
       - name: Docker
         run: docker build -t docker-controller:ci .
   deploy:
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -63,3 +66,7 @@ jobs:
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes dockcontroller@"$DEPLOY_HOST"
+      - name: Health Check
+        env:
+          DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
+        run: curl -sSf https://"$DEPLOY_DOMAIN"/alive --retry 5 --retry-delay 5 --retry-all-errors --max-time 10
