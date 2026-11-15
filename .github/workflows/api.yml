@@ -10,6 +10,7 @@ on:
       - "Dockerfile"
       - ".dockerignore"
       - ".github/workflows/api.yml"
+      - "compose.yaml"
   push:
     branches:
       - "master"
@@ -21,6 +22,7 @@ on:
       - "Dockerfile"
       - ".dockerignore"
       - ".github/workflows/api.yml"
+      - "compose.yaml"
 
 permissions:
   contents: read
