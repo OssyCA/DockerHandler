@@ -11,6 +11,7 @@ on:
       - ".dockerignore"
       - ".github/workflows/api.yml"
       - "compose.yaml"
+      - "caddy/**"
   push:
     branches:
       - "master"
@@ -23,6 +24,7 @@ on:
       - ".dockerignore"
       - ".github/workflows/api.yml"
       - "compose.yaml"
+      - "caddy/**"
 
 permissions:
   contents: read
