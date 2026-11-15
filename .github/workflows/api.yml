@@ -7,6 +7,7 @@ on:
       - "tests/**"
       - "Directory.Build.props"
       - "DockerController.slnx"
+      - "global.json"
       - "Dockerfile"
       - ".dockerignore"
       - ".github/workflows/api.yml"
@@ -20,6 +21,7 @@ on:
       - "tests/**"
       - "Directory.Build.props"
       - "DockerController.slnx"
+      - "global.json"
       - "Dockerfile"
       - ".dockerignore"
       - ".github/workflows/api.yml"
@@ -34,9 +36,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "10.0.x"
+          global-json-file: global.json
       - name: Restore
         run: dotnet restore DockerController.slnx
       - name: Build
