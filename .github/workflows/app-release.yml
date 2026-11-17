@@ -25,3 +25,7 @@ jobs:
         run: npm ci
       - name: Typecheck
         run: npx tsc --noEmit
+      - name: Build Apk
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: npx eas-cli@latest build -p android --profile preview --non-interactive
