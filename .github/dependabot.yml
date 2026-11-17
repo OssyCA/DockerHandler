@@ -3,17 +3,26 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      all:
+        patterns: ["*"]
 
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      all:
+        patterns: ["*"]
 
   - package-ecosystem: "npm"
     directory: "/mobile"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    groups:
+      all:
+        patterns: ["*"]
     ignore:
       - dependency-name: "expo"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
