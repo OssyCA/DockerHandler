@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { colors } from "../../ui/theme";
+import { Settings, Container, MonitorActivity } from "lucide-react-native";
 
 export default function LayoutTabs() {
   return (
@@ -17,8 +18,33 @@ export default function LayoutTabs() {
         tabBarInactiveTintColor: colors.textMuted,
       }}
     >
-      <Tabs.Screen name="index" options={{ title: "Containers" }} />
-      <Tabs.Screen name="settings" options={{ title: "Settings" }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Containers",
+          tabBarIcon: ({ color, size }) => (
+            <Container color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Settings color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="metrics"
+        options={{
+          title: "Metrics",
+          tabBarIcon: ({ color, size }) => (
+            <MonitorActivity color={color} size={size} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
