@@ -14,4 +14,6 @@ public interface IContainerService
     Task<Result> StopAsync(string idOrName, int? timeoutSeconds, CancellationToken cancellationToken);
 
     Task<Result> RestartAsync(string idOrName, CancellationToken cancellationToken);
+
+    Task<Result> GetStats(string idOrName, CancellationToken cancellationToken);
 }
