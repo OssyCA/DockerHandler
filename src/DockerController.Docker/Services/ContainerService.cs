@@ -105,7 +105,7 @@ public sealed class ContainerService(
             : Result.Success();
     }
 
-    public async Task<Result<ContainerStats>> GetStats(string idOrName, CancellationToken cancellationToken)
+    public async Task<Result> GetStats(string idOrName, CancellationToken cancellationToken)
     {
         var resolved = await ResolveAsync(idOrName, cancellationToken);
         if (!resolved.TryGetValue(out var inspection))
@@ -114,8 +114,8 @@ public sealed class ContainerService(
         }
         var stats = await adapter.GetContainerStatsAsync(inspection.Details.Id, cancellationToken);
         return stats is null
-            ? Result<ContainerStats>.NotFound(NotFoundMessage)
-            : Result<ContainerStats>.Success(stats);
+            ? Result.NotFound(NotFoundMessage)
+            : Result.Success(stats);
     }
 
     private async Task<Result<ContainerInspection>> ResolveAsync(
