@@ -14,4 +14,8 @@
     <ProjectReference Include="..\DockerController.Core\DockerController.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="DockerController.Core.Tests" />
+  </ItemGroup>
+
 </Project>

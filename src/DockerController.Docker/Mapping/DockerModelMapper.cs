@@ -81,8 +81,25 @@ internal static class DockerModelMapper
 
     public static ContainerStats ToContainerStats(ContainerStatsResponse? response) =>
         new(
-            response?.CPUStats?.CPUUsage?.TotalUsage ?? 0,
-            response?.MemoryStats?.Usage ?? 0);
+            CpuPercent(response?.CPUStats, response?.PreCPUStats),
+            response?.MemoryStats?.Usage ?? 0,
+            response?.MemoryStats?.Limit ?? 0);
+
+    private static double CpuPercent(CPUStats? current, CPUStats? previous)
+    {
+        if (current is not { CPUUsage: { } currentUsage, SystemUsage: { } currentSystem, OnlineCPUs: { } onlineCpus }
+            || previous is not { CPUUsage: { } previousUsage, SystemUsage: { } previousSystem and > 0 })
+        {
+            return 0;
+        }
+
+        var cpuDelta = (double)currentUsage.TotalUsage - previousUsage.TotalUsage;
+        var systemDelta = (double)currentSystem - previousSystem;
+
+        return cpuDelta > 0 && systemDelta > 0
+            ? cpuDelta / systemDelta * onlineCpus * 100
+            : 0;
+    }
 
     private static IReadOnlyDictionary<string, string> ToLabels(IDictionary<string, string>? labels) =>
         labels is null ? ReadOnlyDictionary<string, string>.Empty : labels.AsReadOnly();

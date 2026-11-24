@@ -7,4 +7,4 @@ public sealed record ContainerListing(ContainerSummary Summary, ContainerAccessS
 
 public sealed record ContainerInspection(ContainerDetails Details, ContainerAccessSubject Subject);
 
-public sealed record ContainerStats(double CPUUsage, ulong MemoryUsage);
+public sealed record ContainerStats(double CpuPercent, ulong MemoryUsageBytes, ulong MemoryLimitBytes);
