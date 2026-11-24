@@ -27,4 +27,6 @@ public interface IDockerClientAdapter
     IAsyncEnumerable<ImageSummary> ListImagesAsync(CancellationToken cancellationToken);
 
     Task<DaemonHealth> CheckDaemonAsync(CancellationToken cancellationToken);
+
+    Task<ContainerStats?> GetContainerStatsAsync(string id, CancellationToken cancellationToken);  
 }

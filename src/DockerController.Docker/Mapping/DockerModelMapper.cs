@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using Docker.DotNet.Models;
+using DockerController.Core.Abstractions;
 using DockerController.Core.Models;
 using DockerController.Core.Security;
 
@@ -77,6 +78,11 @@ internal static class DockerModelMapper
         "dead" => ContainerState.Dead,
         _ => ContainerState.Unknown,
     };
+
+    public static ContainerStats ToContainerStats(ContainerStatsResponse? response) =>
+        new(
+            response?.CPUStats?.CPUUsage?.TotalUsage ?? 0,
+            response?.MemoryStats?.Usage ?? 0);
 
     private static IReadOnlyDictionary<string, string> ToLabels(IDictionary<string, string>? labels) =>
         labels is null ? ReadOnlyDictionary<string, string>.Empty : labels.AsReadOnly();

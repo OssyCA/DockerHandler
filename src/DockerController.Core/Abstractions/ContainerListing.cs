@@ -6,3 +6,5 @@ namespace DockerController.Core.Abstractions;
 public sealed record ContainerListing(ContainerSummary Summary, ContainerAccessSubject Subject);
 
 public sealed record ContainerInspection(ContainerDetails Details, ContainerAccessSubject Subject);
+
+public sealed record ContainerStats(double CPUUsage, ulong MemoryUsage);

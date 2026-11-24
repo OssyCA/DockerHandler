@@ -15,5 +15,5 @@ public interface IContainerService
 
     Task<Result> RestartAsync(string idOrName, CancellationToken cancellationToken);
 
-    Task<Result> GetStats(string idOrName, CancellationToken cancellationToken);
+    Task<Result<ContainerStats>> GetStats(string idOrName, CancellationToken cancellationToken);
 }

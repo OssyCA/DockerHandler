@@ -54,6 +54,14 @@ public static class ContainerEndpoints
             .WithSummary("Startar om en container")
             .WithDescription("Använder den konfigurerade standardtimeouten mellan SIGTERM och SIGKILL.");
 
+        group.MapGet("/{id}/stats", async (
+                string id,
+                IContainerService containers,
+                CancellationToken cancellationToken) =>
+                (await containers.GetStats(id, cancellationToken)).ToHttpResult())
+            .WithSummary("Hämtar statistik för en container")
+            .WithDescription("Svarar 404 om containern inte finns.");
+
         return builder;
     }
 

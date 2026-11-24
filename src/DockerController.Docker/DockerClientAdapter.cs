@@ -140,6 +140,30 @@ public sealed class DockerClientAdapter(
         }
     }
 
+    public async Task<ContainerStats?> GetContainerStatsAsync(string id, CancellationToken cancellationToken)
+    {
+        var container = await InspectContainerAsync(id, cancellationToken);
+
+        if (container is null)
+        {
+            return null;
+        }
+
+        ContainerStatsResponse? response = null;
+
+        var progress = new Progress<ContainerStatsResponse>(stats =>
+        {
+            response = stats;
+        });
+
+        await ExecuteAsync(
+            () => client.Containers.GetContainerStatsAsync(id, new ContainerStatsParameters { Stream = false }, progress, cancellationToken),
+            cancellationToken);
+
+
+        return MapResponse(() => DockerModelMapper.ToContainerStats(response));
+    }
+
     private async Task<DateTimeOffset?> ReadStartedAtAsync(
         ContainerListResponse response,
         CancellationToken cancellationToken)
